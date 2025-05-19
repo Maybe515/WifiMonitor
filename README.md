@@ -1,5 +1,5 @@
 ## はじめに
-Windows11 (24H2)にて、フリーソフトで公開されている「[WifiMonitor](https://www.projectgroup.info/software/WifiMonitor.html)」がアクセスポイントを正常に取得しないので、それっぽく作ってみる。<br>
+Windows11 (24H2)にて、フリーソフトで公開されている「[WifiMonitor](https://www.projectgroup.info/software/WifiMonitor.html)」がアクセスポイントを正常に取得しないので、それっぽく作ってみた。<br>
 <br>
 
 ## 開発環境
