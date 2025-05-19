@@ -248,16 +248,6 @@ namespace WifiMonitor
             }
 
         }
-
-        /// <summary>
-        /// [終了(X)]を押下した時の処理
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void 終了ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
         /// <summary>
         /// プロセスの出力の整形
         /// </summary>
@@ -295,6 +285,51 @@ namespace WifiMonitor
             }
             Array.Resize(ref result, j);
             return result;
+        }
+        /// <summary>
+        /// アプリケーションを終了する
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void 終了ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+        /// <summary>
+        /// リストビューのフォントサイズを小さくする
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void 小ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            listView1.Font = new Font("メイリオ", 8);
+        }
+        /// <summary>
+        /// リストビューのフォントサイズを標準にする
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void 標準ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            listView1.Font = new Font("メイリオ", 11);
+        }
+        /// <summary>
+        /// リストビューのフォントサイズを大きくする
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void 大ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            listView1.Font = new Font("メイリオ", 15);
+        }
+        /// <summary>
+        /// リストビューのフォントサイズをより大きくする
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void 特大ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            listView1.Font = new Font("メイリオ", 19);
         }
     }
 }
