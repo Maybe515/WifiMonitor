@@ -28,8 +28,6 @@ namespace WifiMonitor
         /// </summary>
         private void InitializeForm()
         {
-            string IcoPath = @"favicon.ico";
-            this.Icon = new System.Drawing.Icon(IcoPath);
         }
         /// <summary>
         /// ループ処理
