@@ -29,12 +29,9 @@ namespace WifiMonitor
         /// </summary>
         private void InitializeForm()
         {
-            
             // string IcoPath = @"";
             // this.Icon = new System.Drawing.Icon(IcoPath);
             // this.AutoScroll = true;
-            listView1.Items.Clear();    // リストビュー初期化
-
         }
         /// <summary>
         /// ループ処理
@@ -49,7 +46,7 @@ namespace WifiMonitor
             ps.RedirectStandardError = true;
 
             bool Loop = true;
-            SynchronizationContext mainContext = SynchronizationContext.Current;
+            SynchronizationContext mainContext = SynchronizationContext.Current;    // 画面に情報を反映させるため、メインスレッドの情報を保持
 
             // 非同期処理
             Task.Run(async () =>
@@ -60,17 +57,14 @@ namespace WifiMonitor
                     {
                         await Task.Delay(1000);     // 1秒間隔で情報を取得
 
-                        // ラベルに表示する情報を取得する
-                        int intAP = GetAP(ps);
-                        string strDate = GetNowTime();
-
-                        AddLabel(intAP, strDate);
-
                         // リストビューに表示する情報を取得する
-                        string[] result = GetWlanInfo(ps,intAP);
-
-                        //mainContext.Post(x => AddListView(ssid, cha, sig, sec, mac, ben, enc, wlan, netwk), null);
+                        string[] result = GetWlanInfo(ps);
+                        result = arrResize(result);
                         mainContext.Post(x => AddListView(result), null);
+                        
+                        // ラベルに表示する情報を取得する
+                        string strDate = GetNowTime();
+                        AddLabel(result.Length, strDate);
                     }
                     catch (Exception) { }
                 }
@@ -79,18 +73,12 @@ namespace WifiMonitor
         /// <summary>
         /// アクセスポイント数を取得する
         /// </summary>
-        private int GetAP(ProcessStartInfo ps)
+        private int GetAP(string[] ss)
         {
             int result = new int();
          
             try
             {
-                Process p = Process.Start(ps);
-                string output = p.StandardOutput.ReadToEnd();
-                output = FormatOutput(output);
-
-                string[] ss = output.Split('\n');
-
                 string ptn = "現在";
                 string[] del = new string[] { ptn, "の" };
 
@@ -102,9 +90,6 @@ namespace WifiMonitor
                         result = int.Parse(splitCodes[1]);
                     }
                 }
-                p.Close();
-                p.Dispose();
-
                 return result;
             }
             catch (Exception)
@@ -126,7 +111,6 @@ namespace WifiMonitor
         /// </summary>
         private void AddListView(string[] result)
         {
-            
             List<ListViewItem> listItem = new List<ListViewItem>();
             try
             { 
@@ -163,7 +147,7 @@ namespace WifiMonitor
         {
             // 初期化
             int i = 0;
-            int idx = 0;
+            int j = 0;
             string str = "";
 
             string ssidNum = "";
@@ -176,7 +160,7 @@ namespace WifiMonitor
             string wlty = "";
             string cha = "";
 
-            string[] ptn = { "SSID[1-100]:", "ネットワークの種類:", "認証:", "暗号化:", "BSSID1:", "シグナル:", "無線タイプ:", "チャネル:" };
+            string[] ptn = { "^SSID", "ネットワークの種類:", "認証:", "暗号化:", "BSSID1:", "シグナル:", "無線タイプ:", "チャネル:" };
 
             try
             {
@@ -186,6 +170,7 @@ namespace WifiMonitor
                 output = FormatOutput(output);
 
                 string[] ss = output.Split('\n');
+                int intAP = GetAP(ss);
                 string[] result = new string[intAP];
 
                 foreach (string s in ss)
@@ -196,7 +181,14 @@ namespace WifiMonitor
                         {
                             string[] splitCodes = s.Split(':');
                             ssidNum = splitCodes[0];
-                            ssid = splitCodes[1];
+                            if (splitCodes[1] != "")
+                            {
+                                ssid = splitCodes[1];
+                            }
+                            else
+                            {
+                                ssid = "***";
+                            }
                             i++;
                         }
                         else
@@ -238,14 +230,11 @@ namespace WifiMonitor
                     }
                     if (i == ptn.Length)
                     {
-                        if (ssid != null && cha != null && sig != null && sec != null && mac != null && enc != null && wlty != null && netwk != null)
-                        {
-                            string[] arr = { ssid, cha, sig, sec, mac, enc, wlty, netwk };
-                            result[idx] = string.Join(",", arr);
-                            idx++;
+                        string[] arr = { ssid, cha, sig, sec, mac, enc, wlty, netwk };
+                        result[j] = string.Join(",", arr);
+                        j++;
 
-                            i = 0;
-                        }
+                        i = 0;
                     }
                 }   
                 p.Close();
@@ -276,10 +265,9 @@ namespace WifiMonitor
         /// <returns></returns>
         internal static string FormatOutput(string output)
         {
-            string result = "";
             try
             {
-                result = output.Replace("\r\r\n", "\n"); // 余分な改行や空白の除去
+                string result = output.Replace("\r\r\n", "\n"); // 余分な改行や空白の除去
                 result = result.Replace("\r", "");
                 result = result.TrimEnd(' ');
                 result = result.Replace(" ", "");
@@ -290,6 +278,23 @@ namespace WifiMonitor
                 throw ex;
             }
         }
-
+        /// <summary>
+        /// 配列に含まれている null を配列から除外する
+        /// </summary>
+        /// <param name="result"></param>
+        /// <returns></returns>
+        internal string[] arrResize(string[] result)
+        {
+            int j = 0;
+            for (int i = 0; i < result.Length; i++)
+            {
+                if (result[i] != null)
+                {
+                    j++;
+                }
+            }
+            Array.Resize(ref result, j);
+            return result;
+        }
     }
 }
