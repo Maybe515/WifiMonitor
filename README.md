@@ -1,5 +1,5 @@
 ## はじめに
-フリーソフトで公開されている「[WifiMonitor](https://www.projectgroup.info/software/WifiMonitor.html)」を、それっぽく作ってみた。<br>
+フリーソフトで公開されている「[WifiMonitor](https://www.projectgroup.info/software/WifiMonitor.html)」を、学習も兼ねてそれっぽく作ってみた。<br>
 <br>
 
 ## 開発環境
