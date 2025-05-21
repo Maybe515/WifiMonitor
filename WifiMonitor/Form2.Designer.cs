@@ -194,7 +194,8 @@
             // 
             // columnHeader1
             // 
-            this.columnHeader1.Text = "SSID";
+            this.columnHeader1.Text = "　SSID";
+            this.columnHeader1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.columnHeader1.Width = 200;
             // 
             // columnHeader2
@@ -213,7 +214,7 @@
             // 
             this.columnHeader4.Text = "認証";
             this.columnHeader4.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.columnHeader4.Width = 150;
+            this.columnHeader4.Width = 160;
             // 
             // columnHeader5
             // 
@@ -225,7 +226,7 @@
             // 
             this.columnHeader6.Text = "暗号化";
             this.columnHeader6.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.columnHeader6.Width = 70;
+            this.columnHeader6.Width = 80;
             // 
             // columnHeader7
             // 
@@ -237,7 +238,7 @@
             // 
             this.columnHeader8.Text = "インターネットの種類";
             this.columnHeader8.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.columnHeader8.Width = 200;
+            this.columnHeader8.Width = 190;
             // 
             // Form2
             // 
@@ -269,14 +270,14 @@
         private System.Windows.Forms.ToolStripMenuItem ファイルToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 終了ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 表示ToolStripMenuItem;
-        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
-        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
-        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel3;
         private System.Windows.Forms.ToolStripMenuItem 文字サイズToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 小ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 標準ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 大ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 特大ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel3;
         private System.Windows.Forms.ListView listView1;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
@@ -286,7 +287,6 @@
         private System.Windows.Forms.ColumnHeader columnHeader6;
         private System.Windows.Forms.ColumnHeader columnHeader7;
         private System.Windows.Forms.ColumnHeader columnHeader8;
-        
     }
 }
 

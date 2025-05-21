@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -6,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace WifiMonitor
 {
@@ -17,21 +19,21 @@ namespace WifiMonitor
         {
             InitializeComponent();
         }
-
+        /// <summary>メインルーチン</summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Form2_Load(object sender, EventArgs e)
         {
             InitializeForm();
             LoopDo();
         }
-        /// <summary>
-        /// フォームを初期化する
-        /// </summary>
+        /// <summary>フォームを初期化する</summary>
         private void InitializeForm()
-        {
+        {            
+            listView1.ColumnClick += new ColumnClickEventHandler(listView1_ColumnClick);    // カラムクリックイベントにハンドラを割り当て
+            listView1.ListViewItemSorter = new ListViewColumnSorter();
         }
-        /// <summary>
-        /// ループ処理
-        /// </summary>
+        /// <summary>ループ処理</summary>
         public void LoopDo()
         {
             ProcessStartInfo ps = new ProcessStartInfo(_netsh);
@@ -55,7 +57,7 @@ namespace WifiMonitor
 
                         // リストビューに表示する情報を取得する
                         string[] result = GetWlanInfo(ps);
-                        result = arrResize(result);
+                        result = ArrResize(result);
                         mainContext.Post(x => AddListView(result), null);
 
                         // ラベルに表示する情報を取得する
@@ -67,9 +69,9 @@ namespace WifiMonitor
                 }
             });
         }
-        /// <summary>
-        /// アクセスポイント数を取得する
-        /// </summary>
+        /// <summary>アクセスポイント数を取得する</summary>
+        /// <param name="ss">コマンドプロセスの出力結果</param>
+        /// <returns>アクセスポイント数</returns>
         private int GetAP(string[] ss)
         {
             int result = new int();
@@ -93,18 +95,16 @@ namespace WifiMonitor
                 throw;
             }
         }
-        /// <summary>
-        /// 現在日時を取得する
-        /// </summary>
+        /// <summary>現在日時を取得する</summary>
+        /// <returns>現在日時</returns>
         private string GetNowTime()
         {
             DateTime Now = DateTime.Now;
             string result = Now.ToString("yyyy/MM/dd HH:mm:ss");
             return result;
         }
-        /// <summary>
-        /// 取得した情報をリストビューに追加する
-        /// </summary>
+        /// <summary>取得した情報をリストビューに追加する</summary>
+        /// <param name="result">WLAN情報</param>
         private void AddListView(string[] result)
         {   
             List<ListViewItem> listItem = new List<ListViewItem>();
@@ -123,22 +123,17 @@ namespace WifiMonitor
                 throw;
             }
         }
-        /// <summary>
-        /// 取得した情報をラベルに表示する
-        /// </summary>
-        /// <param name="intAP"></param>
-        /// <param name="strDate"></param>
+        /// <summary>取得した情報をラベルに表示する</summary>
+        /// <param name="intAP">アクセスポイント数</param>
+        /// <param name="strDate">現在日時</param>
         private void AddLabel(int intAP, string strDate)
         {
             toolStripStatusLabel1.Text = "AP：" + intAP;
             toolStripStatusLabel2.Text = "LastRead：" + strDate;
         }
-        /// <summary>
-        /// WLAN情報を取得する
-        /// </summary>
-        /// <param name="ps"></param>
-        /// <param name="intAP"></param>
-        /// <returns></returns>
+        /// <summary>WLAN情報を取得する</summary>
+        /// <param name="ps">コマンドプロセス</param>
+        /// <returns>{ SSID, チャネル, シグナル, 認証, MACアドレス, 暗号化, 無線タイプ, ネットワークの種類 }</returns>
         private string[] GetWlanInfo(ProcessStartInfo ps)
         {
             // 初期化
@@ -242,16 +237,14 @@ namespace WifiMonitor
                 throw ex;
             }
         }
-        /// <summary>
-        /// プロセスの出力の整形
-        /// </summary>
-        /// <param name="output"></param>
-        /// <returns></returns>
+        /// <summary>コマンドプロセスの出力結果を整形する</summary>
+        /// <param name="output">コマンドプロセスの出力結果</param>
+        /// <returns>整形後の出力結果</returns>
         internal static string FormatOutput(string output)
         {
             try
             {
-                string result = output.Replace("\r\r\n", "\n"); // 余分な改行や空白の除去
+                string result = output.Replace("\r\r\n", "\n");     // 余分な改行や空白の除去
                 result = result.Replace("\r", "");
                 result = result.TrimEnd(' ');
                 result = result.Replace(" ", "");
@@ -262,12 +255,10 @@ namespace WifiMonitor
                 throw ex;
             }
         }
-        /// <summary>
-        /// 配列に含まれている null を配列から除外する
-        /// </summary>
-        /// <param name="result"></param>
-        /// <returns></returns>
-        internal string[] arrResize(string[] result)
+        /// <summary>配列に含まれている null を配列から除外する</summary>
+        /// <param name="result">WLAN情報</param>
+        /// <returns>リサイズ後の配列</returns>
+        internal string[] ArrResize(string[] result)
         {
             int j = 0;
             for (int i = 0; i < result.Length; i++)
@@ -280,50 +271,95 @@ namespace WifiMonitor
             Array.Resize(ref result, j);
             return result;
         }
-        /// <summary>
-        /// アプリケーションを終了する
-        /// </summary>
+        /// <summary>アプリケーションを終了する</summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void 終了ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.Close();
         }
-        /// <summary>
-        /// リストビューのフォントサイズを小さくする
-        /// </summary>
+        /// <summary>リストビューのフォントサイズを小さくする</summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void 小ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             listView1.Font = new Font("メイリオ", 8);
         }
-        /// <summary>
-        /// リストビューのフォントサイズを標準にする
-        /// </summary>
+        /// <summary>リストビューのフォントサイズを標準にする</summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void 標準ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             listView1.Font = new Font("メイリオ", 11);
         }
-        /// <summary>
-        /// リストビューのフォントサイズを大きくする
-        /// </summary>
+        /// <summary>リストビューのフォントサイズを大きくする</summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void 大ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             listView1.Font = new Font("メイリオ", 15);
         }
-        /// <summary>
-        /// リストビューのフォントサイズをより大きくする
-        /// </summary>
+        /// <summary>リストビューのフォントサイズをより大きくする</summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void 特大ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             listView1.Font = new Font("メイリオ", 19);
+        }
+        /// <summary>カラムをクリックしたときに並べ替え処理をする</summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void listView1_ColumnClick(object sender, ColumnClickEventArgs e)
+        {
+            var sorter = listView1.ListViewItemSorter as ListViewColumnSorter;
+
+            // クリックされたカラムが現在ソートされているカラムと同じ場合は、ソート方向を反転させる
+            if (e.Column == sorter.SortColumn)
+            {
+                sorter.Order = sorter.Order == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
+            }
+            else
+            {
+                // 新しいカラムでのソートを開始する場合は、昇順でソート
+                sorter.SortColumn = e.Column;
+                sorter.Order = SortOrder.Ascending;
+            }
+
+            // ソートを実行
+            listView1.Sort();
+        }
+    }
+    /// <summary>カスタム Comparer クラス</summary>
+    class ListViewColumnSorter : IComparer
+    {
+        public int SortColumn { get; set; }
+        public SortOrder Order { get; set; }
+
+        /// <summary>コンストラクタ</summary>
+        public ListViewColumnSorter()
+        {
+            SortColumn = 0;
+            Order = SortOrder.Ascending;
+        }
+        /// <summary>比較</summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        public int Compare(object x, object y)
+        {
+            ListViewItem item1 = (ListViewItem)x;
+            ListViewItem item2 = (ListViewItem)y;
+
+            string text1 = item1.SubItems[SortColumn].Text;
+            string text2 = item2.SubItems[SortColumn].Text;
+       
+            int result = String.Compare(text1, text2);  // 文字列として比較
+     
+            if (Order == SortOrder.Descending)      // 降順の場合は結果を反転
+            {
+                result = -result;
+            }
+            return result;
         }
     }
 }
