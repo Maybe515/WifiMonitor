@@ -4,5 +4,5 @@
 
 ## 開発環境
 - Windows11 Pro (23H2)
-- Visual Studio 2022 (Ver.17)
+- Visual Studio 2022 x64 - Ver.17.13.6
 - .NET Framework 4.8
