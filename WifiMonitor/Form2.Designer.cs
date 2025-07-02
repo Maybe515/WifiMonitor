@@ -30,9 +30,10 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form2));
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel_blank = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.ファイルToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.終了ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -42,6 +43,8 @@
             this.標準ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.大ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.特大ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ツールToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.電波取得一時停止ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.listView1 = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -70,10 +73,10 @@
             this.statusStrip1.TabIndex = 1;
             this.statusStrip1.Text = "statusStrip1";
             // 
-            // toolStripStatusLabel3
+            // toolStripStatusLabel_blank
             // 
-            this.toolStripStatusLabel3.Name = "toolStripStatusLabel3";
-            this.toolStripStatusLabel3.Size = new System.Drawing.Size(594, 25);
+            this.toolStripStatusLabel3.Name = "toolStripStatusLabel_blank";
+            this.toolStripStatusLabel3.Size = new System.Drawing.Size(528, 25);
             this.toolStripStatusLabel3.Spring = true;
             // 
             // toolStripStatusLabel1
@@ -96,6 +99,12 @@
             this.toolStripStatusLabel2.Text = "LastRead：";
             this.toolStripStatusLabel2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
+            // toolStripStatusLabel3
+            // 
+            this.toolStripStatusLabel3.Name = "toolStripStatusLabel3";
+            this.toolStripStatusLabel3.Size = new System.Drawing.Size(66, 25);
+            this.toolStripStatusLabel3.Text = "速度：";
+            // 
             // menuStrip1
             // 
             this.menuStrip1.Font = new System.Drawing.Font("Yu Gothic UI", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
@@ -116,13 +125,13 @@
             this.終了ToolStripMenuItem});
             this.ファイルToolStripMenuItem.Name = "ファイルToolStripMenuItem";
             this.ファイルToolStripMenuItem.Size = new System.Drawing.Size(96, 29);
-            this.ファイルToolStripMenuItem.Text = "ファイル(F)";
+            this.ファイルToolStripMenuItem.Text = "ファイル";
             // 
             // 終了ToolStripMenuItem
             // 
             this.終了ToolStripMenuItem.Name = "終了ToolStripMenuItem";
             this.終了ToolStripMenuItem.Size = new System.Drawing.Size(155, 30);
-            this.終了ToolStripMenuItem.Text = "終了(X)";
+            this.終了ToolStripMenuItem.Text = "終了";
             this.終了ToolStripMenuItem.Click += new System.EventHandler(this.終了ToolStripMenuItem_Click);
             // 
             // 表示ToolStripMenuItem
@@ -131,7 +140,7 @@
             this.文字サイズToolStripMenuItem});
             this.表示ToolStripMenuItem.Name = "表示ToolStripMenuItem";
             this.表示ToolStripMenuItem.Size = new System.Drawing.Size(83, 29);
-            this.表示ToolStripMenuItem.Text = "表示(V)";
+            this.表示ToolStripMenuItem.Text = "表示";
             // 
             // 文字サイズToolStripMenuItem
             // 
@@ -171,6 +180,21 @@
             this.特大ToolStripMenuItem.Size = new System.Drawing.Size(134, 30);
             this.特大ToolStripMenuItem.Text = "特大";
             this.特大ToolStripMenuItem.Click += new System.EventHandler(this.特大ToolStripMenuItem_Click);
+            // 
+            // ツールToolStripMenuItem
+            // 
+            this.ツールToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.電波取得一時停止ToolStripMenuItem});
+            this.ツールToolStripMenuItem.Name = "ツールToolStripMenuItem";
+            this.ツールToolStripMenuItem.Size = new System.Drawing.Size(66, 29);
+            this.ツールToolStripMenuItem.Text = "ツール";
+            // 
+            // 電波取得一時停止ToolStripMenuItem
+            // 
+            this.電波取得一時停止ToolStripMenuItem.Name = "電波取得一時停止ToolStripMenuItem";
+            this.電波取得一時停止ToolStripMenuItem.Size = new System.Drawing.Size(242, 30);
+            this.電波取得一時停止ToolStripMenuItem.Text = "電波取得一時停止";
+            this.電波取得一時停止ToolStripMenuItem.Click += new System.EventHandler(this.電波取得一時停止ToolStripMenuItem_Click);
             // 
             // listView1
             // 
@@ -275,9 +299,12 @@
         private System.Windows.Forms.ToolStripMenuItem 標準ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 大ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 特大ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem ツールToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 電波取得一時停止ToolStripMenuItem;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel3;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel_blank;
         private System.Windows.Forms.ListView listView1;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
