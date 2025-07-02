@@ -1,6 +1,8 @@
 ﻿/// 更新履歴
 /// 2025.05.13　初版作成
-/// 2025.07.02　[電波取得一時停止]ボタンを追加
+/// 2025.07.02　[ツール] メニューを追加
+/// 　　　　　　[電波取得一時停止] ボタンを追加
+/// 　　　　　　稼働中ランプを表示
 /// 　　　　　　接続している無線の受信速度を表示
 
 using System;
@@ -8,12 +10,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace WifiMonitor
 {
@@ -72,6 +72,9 @@ namespace WifiMonitor
                         string strDate = GetNowTime();
                         string strPing = GetRecieve();
                         AddLabel(result.Length, strDate, strPing);
+
+                        // 稼働中ランプを点滅させる
+                        FlickLamp();
                     }
                     catch (Exception) { }
                 }
@@ -180,6 +183,18 @@ namespace WifiMonitor
             toolStripStatusLabel1.Text = "AP：" + intAP;
             toolStripStatusLabel2.Text = "LastRead：" + strDate;
             toolStripStatusLabel3.Text = "速度：" + strPing + " Mbps";
+        }
+        /// <summary>稼働中ランプを点滅させる</summary>
+        private void FlickLamp()
+        {
+            if (this.label1.ForeColor == System.Drawing.Color.Red)
+            {
+                this.label1.ForeColor = this.menuStrip1.BackColor;
+            } 
+            else
+            {
+                this.label1.ForeColor = System.Drawing.Color.Red;
+            }
         }
         /// <summary>WLAN情報を取得する</summary>
         /// <param name="ps">コマンドプロセス</param>
