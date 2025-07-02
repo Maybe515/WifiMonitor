@@ -353,6 +353,13 @@ namespace WifiMonitor
         {
             listView1.Font = new Font("メイリオ", 19);
         }
+        /// <summary>無線の電波取得を一時停止する</summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void 電波取得一時停止ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // 処理
+        }
         /// <summary>カラムをクリックしたときに並べ替え処理をする</summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
