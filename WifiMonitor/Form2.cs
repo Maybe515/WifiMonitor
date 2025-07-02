@@ -1,4 +1,9 @@
-﻿using System;
+/// 更新履歴
+/// 2025.05.13　初版作成
+/// 2025.07.02　[電波取得一時停止]ボタンを追加
+/// 　　　　　　接続している無線の受信速度を表示
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -18,13 +23,13 @@ namespace WifiMonitor
         public Form2()
         {
             InitializeComponent();
+            InitializeForm();
         }
         /// <summary>メインルーチン</summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void Form2_Load(object sender, EventArgs e)
         {
-            InitializeForm();
             LoopDo();
         }
         /// <summary>フォームを初期化する</summary>
@@ -62,8 +67,8 @@ namespace WifiMonitor
 
                         // ラベルに表示する情報を取得する
                         string strDate = GetNowTime();
-                        AddLabel(result.Length, strDate);
-
+                        string strPing = GetRecieve();
+                        AddLabel(result.Length, strDate, strPing);
                     }
                     catch (Exception) { }
                 }
@@ -103,6 +108,46 @@ namespace WifiMonitor
             string result = Now.ToString("yyyy/MM/dd HH:mm:ss");
             return result;
         }
+        /// <summary>接続している無線の受信速度を取得する</summary>
+        /// <returns>接続している無線の受信速度</returns>
+        private string GetRecieve()
+        {
+            ProcessStartInfo ps = new ProcessStartInfo(_netsh);
+            ps.Arguments = " wl show interface";
+            ps.CreateNoWindow = true;
+            ps.UseShellExecute = false;
+            ps.RedirectStandardOutput = true;
+            ps.RedirectStandardError = true;
+        
+            string ptn = "受信速度";
+            string result = "";
+        
+            try
+            {
+                // コマンドを実行し、取得した出力結果を整形する
+                Process p = Process.Start(ps);
+                string output = p.StandardOutput.ReadToEnd();
+                output = FormatOutput(output);
+        
+                string[] ss = output.Split('\n');
+                foreach (string s in ss)
+                {
+                    if (Regex.IsMatch(s, ptn))
+                    {
+                        string[] splitCodes = s.Split(':');
+                        result = splitCodes[1]; 
+                    }
+                }
+                p.Close();
+                p.Dispose();
+        
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
         /// <summary>取得した情報をリストビューに追加する</summary>
         /// <param name="result">WLAN情報</param>
         private void AddListView(string[] result)
@@ -126,10 +171,12 @@ namespace WifiMonitor
         /// <summary>取得した情報をラベルに表示する</summary>
         /// <param name="intAP">アクセスポイント数</param>
         /// <param name="strDate">現在日時</param>
-        private void AddLabel(int intAP, string strDate)
+        /// <param name="strPing">接続している無線の受信速度</param>
+        private void AddLabel(int intAP, string strDate, string strPing)
         {
             toolStripStatusLabel1.Text = "AP：" + intAP;
             toolStripStatusLabel2.Text = "LastRead：" + strDate;
+            toolStripStatusLabel3.Text = "速度：" + strPing + " Mbps";
         }
         /// <summary>WLAN情報を取得する</summary>
         /// <param name="ps">コマンドプロセス</param>
