@@ -30,10 +30,10 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form2));
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel_blank = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.ファイルToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.終了ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -64,6 +64,7 @@
             this.statusStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel3,
+            this.toolStripStatusLabel_blank,
             this.toolStripStatusLabel1,
             this.toolStripStatusLabel2});
             this.statusStrip1.Location = new System.Drawing.Point(0, 372);
@@ -73,11 +74,17 @@
             this.statusStrip1.TabIndex = 1;
             this.statusStrip1.Text = "statusStrip1";
             // 
+            // toolStripStatusLabel3
+            // 
+            this.toolStripStatusLabel3.Name = "toolStripStatusLabel3";
+            this.toolStripStatusLabel3.Size = new System.Drawing.Size(66, 25);
+            this.toolStripStatusLabel3.Text = "速度：";
+            // 
             // toolStripStatusLabel_blank
             // 
-            this.toolStripStatusLabel3.Name = "toolStripStatusLabel_blank";
-            this.toolStripStatusLabel3.Size = new System.Drawing.Size(528, 25);
-            this.toolStripStatusLabel3.Spring = true;
+            this.toolStripStatusLabel_blank.Name = "toolStripStatusLabel_blank";
+            this.toolStripStatusLabel_blank.Size = new System.Drawing.Size(528, 25);
+            this.toolStripStatusLabel_blank.Spring = true;
             // 
             // toolStripStatusLabel1
             // 
@@ -99,19 +106,14 @@
             this.toolStripStatusLabel2.Text = "LastRead：";
             this.toolStripStatusLabel2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // toolStripStatusLabel3
-            // 
-            this.toolStripStatusLabel3.Name = "toolStripStatusLabel3";
-            this.toolStripStatusLabel3.Size = new System.Drawing.Size(66, 25);
-            this.toolStripStatusLabel3.Text = "速度：";
-            // 
             // menuStrip1
             // 
             this.menuStrip1.Font = new System.Drawing.Font("Yu Gothic UI", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ファイルToolStripMenuItem,
-            this.表示ToolStripMenuItem});
+            this.表示ToolStripMenuItem,
+            this.ツールToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(10, 3, 0, 3);
@@ -124,13 +126,13 @@
             this.ファイルToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.終了ToolStripMenuItem});
             this.ファイルToolStripMenuItem.Name = "ファイルToolStripMenuItem";
-            this.ファイルToolStripMenuItem.Size = new System.Drawing.Size(96, 29);
+            this.ファイルToolStripMenuItem.Size = new System.Drawing.Size(77, 29);
             this.ファイルToolStripMenuItem.Text = "ファイル";
             // 
             // 終了ToolStripMenuItem
             // 
             this.終了ToolStripMenuItem.Name = "終了ToolStripMenuItem";
-            this.終了ToolStripMenuItem.Size = new System.Drawing.Size(155, 30);
+            this.終了ToolStripMenuItem.Size = new System.Drawing.Size(134, 30);
             this.終了ToolStripMenuItem.Text = "終了";
             this.終了ToolStripMenuItem.Click += new System.EventHandler(this.終了ToolStripMenuItem_Click);
             // 
@@ -139,7 +141,7 @@
             this.表示ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.文字サイズToolStripMenuItem});
             this.表示ToolStripMenuItem.Name = "表示ToolStripMenuItem";
-            this.表示ToolStripMenuItem.Size = new System.Drawing.Size(83, 29);
+            this.表示ToolStripMenuItem.Size = new System.Drawing.Size(62, 29);
             this.表示ToolStripMenuItem.Text = "表示";
             // 
             // 文字サイズToolStripMenuItem

@@ -1,4 +1,4 @@
-/// 更新履歴
+﻿/// 更新履歴
 /// 2025.05.13　初版作成
 /// 2025.07.02　[電波取得一時停止]ボタンを追加
 /// 　　　　　　接続している無線の受信速度を表示
@@ -8,6 +8,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,6 +20,7 @@ namespace WifiMonitor
     public partial class Form2 : Form
     {
         const string _netsh = @"C:\Windows\System32\netsh.exe";
+        public bool Loop = true;
 
         public Form2()
         {
@@ -37,8 +39,10 @@ namespace WifiMonitor
         {            
             listView1.ColumnClick += new ColumnClickEventHandler(listView1_ColumnClick);    // カラムクリックイベントにハンドラを割り当て
             listView1.ListViewItemSorter = new ListViewColumnSorter();
+            
         }
         /// <summary>ループ処理</summary>
+        /// <param name="Loop">ループ処理をさせるためのパラメータ</param>
         public void LoopDo()
         {
             ProcessStartInfo ps = new ProcessStartInfo(_netsh);
@@ -48,7 +52,6 @@ namespace WifiMonitor
             ps.RedirectStandardOutput = true;
             ps.RedirectStandardError = true;
 
-            bool Loop = true;
             SynchronizationContext mainContext = SynchronizationContext.Current;    // 画面に情報を反映させるため、メインスレッドの情報を保持
 
             // 非同期処理
@@ -118,17 +121,17 @@ namespace WifiMonitor
             ps.UseShellExecute = false;
             ps.RedirectStandardOutput = true;
             ps.RedirectStandardError = true;
-        
+
             string ptn = "受信速度";
             string result = "";
-        
+
             try
             {
                 // コマンドを実行し、取得した出力結果を整形する
                 Process p = Process.Start(ps);
                 string output = p.StandardOutput.ReadToEnd();
                 output = FormatOutput(output);
-        
+
                 string[] ss = output.Split('\n');
                 foreach (string s in ss)
                 {
@@ -140,7 +143,7 @@ namespace WifiMonitor
                 }
                 p.Close();
                 p.Dispose();
-        
+
                 return result;
             }
             catch (Exception ex)
@@ -358,7 +361,17 @@ namespace WifiMonitor
         /// <param name="e"></param>
         private void 電波取得一時停止ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // 処理
+            if (Loop == true)
+            {
+                this.Text = "WifiMonitor（停止中）";
+                Loop = false;
+            } 
+            else if (Loop == false)
+            {
+                this.Text = "WifiMonitor";
+                Loop = true;
+                LoopDo();
+            }
         }
         /// <summary>カラムをクリックしたときに並べ替え処理をする</summary>
         /// <param name="sender"></param>
