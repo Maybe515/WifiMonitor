@@ -59,17 +59,16 @@ namespace WifiMonitor
                         await Task.Delay(1000);     // 1秒間隔で情報を取得
 
                         // 現在接続しているSSIDの情報を取得する
-                        string NowSSID = GetWlanInterface(ps,"^SSID");
-                        string strPing = GetWlanInterface(ps,"受信速度");
+                        string[] WlItfc = GetWlanInterface(ps);
 
                         // リストビューに表示する情報を取得する
-                        string[] result = GetWlanInfo(ps);
-                        result = ArrResize(result);
-                        mainContext.Post(x => AddListView(result, NowSSID), null);
+                        string[] WlInfo = GetWlanInfo(ps);
+                        WlInfo = ArrResize(WlInfo);
+                        mainContext.Post(x => AddListView(WlInfo, WlItfc[0]), null);
 
-                        
+                        // ラベルに表示させる情報を取得する
                         string strDate = GetNowTime();
-                        AddLabel(result.Length, strDate, strPing);
+                        AddLabel(WlInfo.Length, strDate, WlItfc[1]);
 
                         // 取得中ランプを点滅させる
                         FlickLamp();
@@ -98,7 +97,6 @@ namespace WifiMonitor
             string cha = "";
 
             string[] ptn = { "^SSID", "ネットワークの種類:", "認証:", "暗号化:", "BSSID1:", "シグナル:", "無線タイプ:", "チャネル:" };
-
             ps.Arguments = " wl show networks mode=bssid";
 
             try
@@ -187,8 +185,9 @@ namespace WifiMonitor
             }
         }
         /// <summary>取得した情報をリストビューに追加する</summary>
-        /// <param name="result">WLAN情報</param>
-        private void AddListView(string[] result, string NowSSID)
+        /// <param name="WlInfo">WLAN情報</param>
+        /// <param name="NowSSID">接続しているSSID</param>
+        private void AddListView(string[] WlInfo, string NowSSID)
         {            
             List<ListViewItem> listItem = new List<ListViewItem>();
             var ssid = new ListViewItem();
@@ -196,9 +195,9 @@ namespace WifiMonitor
             {
                 listView1.Items.Clear();
 
-                for (int i = 0; i < result.Length; i++)
+                for (int i = 0; i < WlInfo.Length; i++)
                 {
-                    string[] arrInfo = result[i].Split(',');
+                    string[] arrInfo = WlInfo[i].Split(',');
 
                     if (arrInfo[0] == NowSSID)
                     {
@@ -229,13 +228,12 @@ namespace WifiMonitor
             }
         }
         /// <summary>現在接続しているSSIDの情報を取得する</summary>
-        /// <returns>SSID、受信速度</returns>
-        private string GetWlanInterface(ProcessStartInfo ps, string Target) 
+        /// <returns>{ SSID, 受信速度 }</returns>
+        private string[] GetWlanInterface(ProcessStartInfo ps) 
         {
+            string[] result = new string[2];
+            string[] ptn = {"^SSID", "受信速度" };
             ps.Arguments = " wl show interface";
-
-            string ptn = Target;
-            string result = "";
 
             try
             {
@@ -245,12 +243,15 @@ namespace WifiMonitor
                 output = FormatOutput(output);
 
                 string[] ss = output.Split('\n');
-                foreach (string s in ss)
+                for (int i = 0; i < ptn.Length; i++)
                 {
-                    if (Regex.IsMatch(s, ptn))
+                    foreach (string s in ss)
                     {
-                        string[] splitCodes = s.Split(':');
-                        result = splitCodes[1];
+                        if (Regex.IsMatch(s, ptn[i]))
+                        {
+                            string[] splitCodes = s.Split(':');
+                            result[i] = splitCodes[1];
+                        }
                     }
                 }
                 p.Close();
@@ -319,20 +320,20 @@ namespace WifiMonitor
             }
         }
         /// <summary>配列に含まれている null を配列から除外する</summary>
-        /// <param name="result">WLAN情報</param>
+        /// <param name="WlInfo">WLAN情報</param>
         /// <returns>リサイズ後の配列</returns>
-        internal string[] ArrResize(string[] result)
+        internal string[] ArrResize(string[] WlInfo)
         {
             int j = 0;
-            for (int i = 0; i < result.Length; i++)
+            for (int i = 0; i < WlInfo.Length; i++)
             {
-                if (result[i] != null)
+                if (WlInfo[i] != null)
                 {
                     j++;
                 }
             }
-            Array.Resize(ref result, j);
-            return result;
+            Array.Resize(ref WlInfo, j);
+            return WlInfo;
         }
         /// <summary>コマンドプロセスの出力結果を整形する</summary>
         /// <param name="output">コマンドプロセスの出力結果</param>
