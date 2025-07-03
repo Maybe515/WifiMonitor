@@ -1,6 +1,5 @@
 ## 概要
 フリーソフトで公開されている『[WifiMonitor](https://www.projectgroup.info/software/WifiMonitor.html)』を学習も兼ねてそれっぽく作ってみた。<br>
-<br>
 
 ### 動作について
 netsh コマンドを実行して、その出力結果をリストビューに表示<br>
