@@ -2,7 +2,7 @@
 /// 2025.05.13　初版作成
 /// 2025.07.02　[ツール] メニューを追加
 /// 　　　　　　[電波取得一時停止] ボタンを追加
-/// 　　　　　　稼働中ランプを表示
+/// 　　　　　　取得中ランプを表示
 /// 　　　　　　接続している無線の受信速度を表示
 
 using System;
@@ -28,8 +28,6 @@ namespace WifiMonitor
             InitializeForm();
         }
         /// <summary>メインルーチン</summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void Form2_Load(object sender, EventArgs e)
         {
             LoopDo();
@@ -39,14 +37,11 @@ namespace WifiMonitor
         {            
             listView1.ColumnClick += new ColumnClickEventHandler(listView1_ColumnClick);    // カラムクリックイベントにハンドラを割り当て
             listView1.ListViewItemSorter = new ListViewColumnSorter();
-            
         }
         /// <summary>ループ処理</summary>
-        /// <param name="Loop">ループ処理をさせるためのパラメータ</param>
         public void LoopDo()
         {
             ProcessStartInfo ps = new ProcessStartInfo(_netsh);
-            ps.Arguments = " wl show networks mode=bssid";
             ps.CreateNoWindow = true;
             ps.UseShellExecute = false;
             ps.RedirectStandardOutput = true;
@@ -63,138 +58,25 @@ namespace WifiMonitor
                     {
                         await Task.Delay(1000);     // 1秒間隔で情報を取得
 
+                        // 現在接続しているSSIDの情報を取得する
+                        string NowSSID = GetWlanInterface(ps,"^SSID");
+                        string strPing = GetWlanInterface(ps,"受信速度");
+
                         // リストビューに表示する情報を取得する
                         string[] result = GetWlanInfo(ps);
                         result = ArrResize(result);
-                        mainContext.Post(x => AddListView(result), null);
+                        mainContext.Post(x => AddListView(result, NowSSID), null);
 
-                        // ラベルに表示する情報を取得する
+                        
                         string strDate = GetNowTime();
-                        string strPing = GetRecieve();
                         AddLabel(result.Length, strDate, strPing);
 
-                        // 稼働中ランプを点滅させる
+                        // 取得中ランプを点滅させる
                         FlickLamp();
                     }
                     catch (Exception) { }
                 }
             });
-        }
-        /// <summary>アクセスポイント数を取得する</summary>
-        /// <param name="ss">コマンドプロセスの出力結果</param>
-        /// <returns>アクセスポイント数</returns>
-        private int GetAP(string[] ss)
-        {
-            int result = new int();
-            string ptn = "現在";
-            string[] del = new string[] { ptn, "の" };
-
-            try
-            {
-                foreach (string s in ss)
-                {
-                    if (Regex.IsMatch(s, ptn))
-                    {
-                        string[] splitCodes = s.Split(del, StringSplitOptions.None);
-                        result = int.Parse(splitCodes[1]);
-                    }
-                }
-                return result;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-        /// <summary>現在日時を取得する</summary>
-        /// <returns>現在日時</returns>
-        private string GetNowTime()
-        {
-            DateTime Now = DateTime.Now;
-            string result = Now.ToString("yyyy/MM/dd HH:mm:ss");
-            return result;
-        }
-        /// <summary>接続している無線の受信速度を取得する</summary>
-        /// <returns>接続している無線の受信速度</returns>
-        private string GetRecieve()
-        {
-            ProcessStartInfo ps = new ProcessStartInfo(_netsh);
-            ps.Arguments = " wl show interface";
-            ps.CreateNoWindow = true;
-            ps.UseShellExecute = false;
-            ps.RedirectStandardOutput = true;
-            ps.RedirectStandardError = true;
-
-            string ptn = "受信速度";
-            string result = "";
-
-            try
-            {
-                // コマンドを実行し、取得した出力結果を整形する
-                Process p = Process.Start(ps);
-                string output = p.StandardOutput.ReadToEnd();
-                output = FormatOutput(output);
-
-                string[] ss = output.Split('\n');
-                foreach (string s in ss)
-                {
-                    if (Regex.IsMatch(s, ptn))
-                    {
-                        string[] splitCodes = s.Split(':');
-                        result = splitCodes[1]; 
-                    }
-                }
-                p.Close();
-                p.Dispose();
-
-                return result;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-        /// <summary>取得した情報をリストビューに追加する</summary>
-        /// <param name="result">WLAN情報</param>
-        private void AddListView(string[] result)
-        {   
-            List<ListViewItem> listItem = new List<ListViewItem>();
-            try
-            { 
-                for (int i = 0; i < result.Length; i++)
-                {
-                    string[] arrInfo = result[i].Split(',');
-                    listItem.Add(new ListViewItem(arrInfo));
-                }
-                listView1.Items.Clear();
-                listView1.Items.AddRange(listItem.ToArray());
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-        /// <summary>取得した情報をラベルに表示する</summary>
-        /// <param name="intAP">アクセスポイント数</param>
-        /// <param name="strDate">現在日時</param>
-        /// <param name="strPing">接続している無線の受信速度</param>
-        private void AddLabel(int intAP, string strDate, string strPing)
-        {
-            toolStripStatusLabel1.Text = "AP：" + intAP;
-            toolStripStatusLabel2.Text = "LastRead：" + strDate;
-            toolStripStatusLabel3.Text = "速度：" + strPing + " Mbps";
-        }
-        /// <summary>稼働中ランプを点滅させる</summary>
-        private void FlickLamp()
-        {
-            if (this.label1.ForeColor == System.Drawing.Color.Red)
-            {
-                this.label1.ForeColor = this.menuStrip1.BackColor;
-            } 
-            else
-            {
-                this.label1.ForeColor = System.Drawing.Color.Red;
-            }
         }
         /// <summary>WLAN情報を取得する</summary>
         /// <param name="ps">コマンドプロセス</param>
@@ -217,6 +99,8 @@ namespace WifiMonitor
 
             string[] ptn = { "^SSID", "ネットワークの種類:", "認証:", "暗号化:", "BSSID1:", "シグナル:", "無線タイプ:", "チャネル:" };
 
+            ps.Arguments = " wl show networks mode=bssid";
+
             try
             {
                 // コマンドを実行し、取得した出力結果を整形する
@@ -232,7 +116,7 @@ namespace WifiMonitor
                 {
                     if (Regex.IsMatch(s, ptn[i]))
                     {
-                        if (i == 0)   // SSID名
+                        if (i == 0)     // SSID名
                         {
                             string[] splitCodes = s.Split(':');
 
@@ -240,7 +124,7 @@ namespace WifiMonitor
                             {
                                 ssid = splitCodes[1];
                             }
-                            else
+                            else       // SSID名を取得できなかった場合の処理
                             {
                                 ssid = "***";
                             }
@@ -302,22 +186,136 @@ namespace WifiMonitor
                 throw ex;
             }
         }
-        /// <summary>コマンドプロセスの出力結果を整形する</summary>
-        /// <param name="output">コマンドプロセスの出力結果</param>
-        /// <returns>整形後の出力結果</returns>
-        internal static string FormatOutput(string output)
-        {
+        /// <summary>取得した情報をリストビューに追加する</summary>
+        /// <param name="result">WLAN情報</param>
+        private void AddListView(string[] result, string NowSSID)
+        {            
+            List<ListViewItem> listItem = new List<ListViewItem>();
+            var ssid = new ListViewItem();
             try
             {
-                string result = output.Replace("\r\r\n", "\n");     // 余分な改行や空白の除去
-                result = result.Replace("\r", "");
-                result = result.TrimEnd(' ');
-                result = result.Replace(" ", "");
+                listView1.Items.Clear();
+
+                for (int i = 0; i < result.Length; i++)
+                {
+                    string[] arrInfo = result[i].Split(',');
+
+                    if (arrInfo[0] == NowSSID)
+                    {
+                        ssid = new ListViewItem(arrInfo[0])
+                        {
+                            Font = new Font(listView1.Font, FontStyle.Bold),    // 太字にする
+                            BackColor = Color.LightGray                         // 背景色をライトグレーにする
+                        };
+                    }
+                    else
+                    {
+                        ssid = new ListViewItem(arrInfo[0]);                        
+                    }
+                    ssid.SubItems.Add(arrInfo[1]);
+                    ssid.SubItems.Add(arrInfo[2]);
+                    ssid.SubItems.Add(arrInfo[3]);
+                    ssid.SubItems.Add(arrInfo[4]);
+                    ssid.SubItems.Add(arrInfo[5]);
+                    ssid.SubItems.Add(arrInfo[6]);
+                    ssid.SubItems.Add(arrInfo[7]);
+
+                    listView1.Items.Add(ssid);
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        /// <summary>現在接続しているSSIDの情報を取得する</summary>
+        /// <returns>SSID、受信速度</returns>
+        private string GetWlanInterface(ProcessStartInfo ps, string Target) 
+        {
+            ps.Arguments = " wl show interface";
+
+            string ptn = Target;
+            string result = "";
+
+            try
+            {
+                // コマンドを実行し、取得した出力結果を整形する
+                Process p = Process.Start(ps);
+                string output = p.StandardOutput.ReadToEnd();
+                output = FormatOutput(output);
+
+                string[] ss = output.Split('\n');
+                foreach (string s in ss)
+                {
+                    if (Regex.IsMatch(s, ptn))
+                    {
+                        string[] splitCodes = s.Split(':');
+                        result = splitCodes[1];
+                    }
+                }
+                p.Close();
+                p.Dispose();
+
                 return result;
             }
             catch (Exception ex)
             {
                 throw ex;
+            }
+        }
+        /// <summary>アクセスポイント数を取得する</summary>
+        /// <param name="ss">コマンドプロセスの出力結果</param>
+        /// <returns>アクセスポイント数</returns>
+        private int GetAP(string[] ss)
+        {
+            int result = new int();
+            string ptn = "現在";
+            string[] del = new string[] { ptn, "の" };
+
+            try
+            {
+                foreach (string s in ss)
+                {
+                    if (Regex.IsMatch(s, ptn))
+                    {
+                        string[] splitCodes = s.Split(del, StringSplitOptions.None);
+                        result = int.Parse(splitCodes[1]);
+                    }
+                }
+                return result;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        /// <returns>現在日時</returns>
+        private string GetNowTime()
+        {
+            DateTime Now = DateTime.Now;
+            string result = Now.ToString("yyyy/MM/dd HH:mm:ss");
+            return result;
+        }
+        /// <summary>取得した情報をラベルに表示する</summary>
+        /// <param name="intAP">アクセスポイント数</param>
+        /// <param name="strDate">現在日時</param>
+        /// <param name="strPing">接続している無線の受信速度</param>
+        private void AddLabel(int intAP, string strDate, string strPing)
+        {
+            toolStripStatusLabel1.Text = "AP：" + intAP;
+            toolStripStatusLabel2.Text = "LastRead：" + strDate;
+            toolStripStatusLabel3.Text = "速度：" + strPing + " Mbps";
+        }
+        /// <summary>稼働中ランプを点滅させる</summary>
+        private void FlickLamp()
+        {
+            if (this.label1.ForeColor == System.Drawing.Color.Red)
+            {
+                this.label1.ForeColor = System.Drawing.Color.Gray;
+            }
+            else
+            {
+                this.label1.ForeColor = System.Drawing.Color.Red;
             }
         }
         /// <summary>配列に含まれている null を配列から除外する</summary>
@@ -336,49 +334,57 @@ namespace WifiMonitor
             Array.Resize(ref result, j);
             return result;
         }
+        /// <summary>コマンドプロセスの出力結果を整形する</summary>
+        /// <param name="output">コマンドプロセスの出力結果</param>
+        /// <returns>整形後の出力結果</returns>
+        internal static string FormatOutput(string output)
+        {
+            try
+            {
+                // 余分な改行や空白の除去
+                string result = output.Replace("\r\r\n", "\n");
+                result = result.Replace("\r", "");
+                result = result.TrimEnd(' ');
+                result = result.Replace(" ", "");
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
         /// <summary>アプリケーションを終了する</summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void 終了ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.Close();
         }
         /// <summary>リストビューのフォントサイズを小さくする</summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void 小ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             listView1.Font = new Font("メイリオ", 8);
         }
         /// <summary>リストビューのフォントサイズを標準にする</summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void 標準ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             listView1.Font = new Font("メイリオ", 11);
         }
         /// <summary>リストビューのフォントサイズを大きくする</summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void 大ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             listView1.Font = new Font("メイリオ", 15);
         }
         /// <summary>リストビューのフォントサイズをより大きくする</summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void 特大ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             listView1.Font = new Font("メイリオ", 19);
         }
         /// <summary>無線の電波取得を一時停止する</summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void 電波取得一時停止ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (Loop == true)
             {
                 this.Text = "WifiMonitor（停止中）";
+                this.label1.ForeColor = System.Drawing.Color.Red;
                 Loop = false;
             } 
             else if (Loop == false)
@@ -389,8 +395,6 @@ namespace WifiMonitor
             }
         }
         /// <summary>カラムをクリックしたときに並べ替え処理をする</summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void listView1_ColumnClick(object sender, ColumnClickEventArgs e)
         {
             var sorter = listView1.ListViewItemSorter as ListViewColumnSorter;
@@ -424,8 +428,6 @@ namespace WifiMonitor
             Order = SortOrder.Ascending;
         }
         /// <summary>比較</summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
         /// <returns></returns>
         public int Compare(object x, object y)
         {
