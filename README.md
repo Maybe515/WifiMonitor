@@ -1,9 +1,12 @@
 ## 概要
-フリーソフトで公開されている『[WifiMonitor](https://www.projectgroup.info/software/WifiMonitor.html)』を学習も兼ねてそれっぽく作ってみた。<br>
+フリーソフトで公開されている『[WifiMonitor](https://www.projectgroup.info/software/WifiMonitor.html)』を、学習も兼ねてそれっぽく作ってみました。<br>
 
-### 動作について
-netsh コマンドを実行して、その出力結果をリストビューに表示<br>
-取得した結果をループ処理で１秒間隔に更新<br>
+### 機能
+- アクセスポイントの情報をリストビューに表示
+- １秒間隔で情報を更新
+- 電波の取得を一時停止するボタンを実装
+- 接続中のアクセスポイントを太字かつ背景をグレーにして強調
+- 接続している無線の受信速度を表示
 <br>
 
 ## 開発環境
