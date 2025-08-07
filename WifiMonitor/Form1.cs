@@ -21,7 +21,7 @@ namespace WifiMonitor
             InitializeForm();
         }
 
-        private void Form2_Load(object sender, EventArgs e)
+        private void Form1_Load(object sender, EventArgs e)
         {
             StartMonitoring();
         }
@@ -299,3 +299,4 @@ namespace WifiMonitor
         }
     }
 }
+
