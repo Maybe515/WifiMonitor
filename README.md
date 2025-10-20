@@ -1,5 +1,5 @@
 ## 概要
-フリーソフトで公開されている『[WifiMonitor](https://www.projectgroup.info/software/WifiMonitor.html)』を、学習も兼ねてそれっぽく作ってみました。<br>
+フリーソフトで公開されている『[WifiMonitor](https://www.projectgroup.info/software/WifiMonitor.html)』を、勉強も兼ねてそれっぽく自作してみました。<br>
 ### 追記
 2025-08-07　Form1をリファクタリング<br>
 <br>
